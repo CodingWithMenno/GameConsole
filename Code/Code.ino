@@ -1,28 +1,42 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-#include "Test.h"
+#include "Log.h"
+#include "LedWindow.h"
+#include "Button.h"
 
-LiquidCrystal_I2C lcd(0x27,20,4);
+#define SERIAL_BAUD     9600
+
+// Led Window settings
+#define NUM_DISPLAYS_X  1
+#define NUM_DISPLAYS_Y  1
+#define DIN_PIN         11
+#define CLK_PIN         13
+#define CS_PIN          3
+
+LedWindow* ledWindow;
+
+Button* button;
 
 void setup() 
 {
-  pinMode(LED_BUILTIN, OUTPUT);
+  Log::Init(SERIAL_BAUD);
 
-  lcd.init();
+  ledWindow = new LedWindow(DIN_PIN, CLK_PIN, CS_PIN, NUM_DISPLAYS_X, NUM_DISPLAYS_Y);
+  ledWindow->setDisplayBrightness(4);
 
-  lcd.backlight();
-  lcd.setCursor(0,0);
-  lcd.print("Hello, world!");
+  button = new Button(2);
 }
 
 void loop() 
 {
-  turnOn();
-  delay(100);  
-  turnOff();
-  delay(100);   
+  ledWindow->clear();
 
-//  lcd.clear();
-//  lcd.setCursor(0,0);
-//  lcd.print("Oke!");
+  if (button->isPressed())
+  {
+    ledWindow->setPixel(7, 4, 0, true);
+  }
+}
+
+void shutdown()
+{
+  delete ledWindow;
+  delete button;
 }

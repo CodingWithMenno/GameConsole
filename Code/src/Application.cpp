@@ -3,7 +3,7 @@
 
 Application::Application()
 {
-    
+    m_isRunning = true;
 }
 
 Application::~Application()
@@ -11,7 +11,7 @@ Application::~Application()
     
 }
 
-void Application::run()
+void Application::update()
 {
     
 }

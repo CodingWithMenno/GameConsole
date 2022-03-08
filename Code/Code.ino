@@ -24,9 +24,19 @@ void setup()
   // Initialiseer inputs & outputs (de poorten)
 
   Application* app = new Application();
-  app->run();
+
+  while (app->isRunning())
+  {
+    app->update();
+
+    // Update de inputs
+  }
 
   delete app;
+
+  // Verwijder de inputs
+
+  
 
   // ledWindow = new LedWindow(DIN_PIN, CLK_PIN, CS_PIN, NUM_DISPLAYS_X, NUM_DISPLAYS_Y);
   // ledWindow->setDisplayBrightness(4);

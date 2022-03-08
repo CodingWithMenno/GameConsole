@@ -2,9 +2,14 @@
 
 class Application
 {
+private:
+    bool m_isRunning;
+
 public:
     Application();
     ~Application();
 
-    void run();
+    void update();
+
+    bool isRunning() { return m_isRunning; }
 };

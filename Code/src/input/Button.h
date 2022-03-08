@@ -6,10 +6,10 @@ private:
     unsigned m_pin;
 
 public:
-    Button(unsigned pin)
+    Button(unsigned pin, bool useBuiltInResistor = false)
     {
         m_pin = pin;
-        pinMode(m_pin, INPUT);
+        useBuiltInResistor ? pinMode(m_pin, INPUT_PULLUP) : pinMode(m_pin, INPUT);
     }
 
     bool isPressed()

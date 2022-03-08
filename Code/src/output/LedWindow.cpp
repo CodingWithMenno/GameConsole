@@ -1,5 +1,5 @@
 #include "LedWindow.h"
-#include "Log.h"
+#include "../Log.h"
 
 LedWindow::LedWindow(unsigned dinPin, unsigned clkPin, unsigned csPin, unsigned numDisplaysX, unsigned numDisplaysY)
     : m_numDisplays(numDisplaysX * numDisplaysY), m_numDisplaysX(numDisplaysX), m_numDisplaysY(numDisplaysY)

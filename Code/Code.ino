@@ -1,19 +1,19 @@
 #include "src/Log.h"
 #include "src/Application.h"
 
-// #include "LedWindow.h"
+#include "src/output/LedWindow.h"
 // #include "Button.h"
 
 #define SERIAL_BAUD     9600
 
 // Led Window settings
-// #define NUM_DISPLAYS_X  1
-// #define NUM_DISPLAYS_Y  1
-// #define DIN_PIN         11
-// #define CLK_PIN         13
-// #define CS_PIN          3
+#define NUM_DISPLAYS_X  4
+#define NUM_DISPLAYS_Y  1
+#define DIN_PIN         11
+#define CLK_PIN         12
+#define CS_PIN          10
 
-// LedWindow* ledWindow;
+LedWindow* ledWindow;
 
 // Button* button;
 
@@ -22,6 +22,11 @@ void setup()
   Log::Init(SERIAL_BAUD);
 
   // Initialiseer inputs & outputs (de poorten)
+
+  ledWindow = new LedWindow(DIN_PIN, CLK_PIN, CS_PIN, NUM_DISPLAYS_X, NUM_DISPLAYS_Y);
+  ledWindow->setDisplayBrightness(4);
+  ledWindow->clear();
+  ledWindow->setPixel(0, 0, 1, true);
 
   Application* app = new Application();
 
@@ -35,11 +40,6 @@ void setup()
   delete app;
 
   // Verwijder de inputs
-
-  
-
-  // ledWindow = new LedWindow(DIN_PIN, CLK_PIN, CS_PIN, NUM_DISPLAYS_X, NUM_DISPLAYS_Y);
-  // ledWindow->setDisplayBrightness(4);
 
   // button = new Button(2);
 }

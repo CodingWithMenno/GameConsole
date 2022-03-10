@@ -1,21 +1,11 @@
 #include "src/Log.h"
 #include "src/Application.h"
 
-#include "src/output/LedWindow.h"
-// #include "Button.h"
+#include "src/output/DotMatrix.h"
 
 #define SERIAL_BAUD     9600
 
-// Led Window settings
-#define NUM_DISPLAYS_X  4
-#define NUM_DISPLAYS_Y  1
-#define DIN_PIN         11
-#define CLK_PIN         12
-#define CS_PIN          10
-
-LedWindow* ledWindow;
-
-// Button* button;
+DotMatrix* ledWindow;
 
 void setup() 
 {
@@ -23,39 +13,34 @@ void setup()
 
   // Initialiseer inputs & outputs (de poorten)
 
-  ledWindow = new LedWindow(DIN_PIN, CLK_PIN, CS_PIN, NUM_DISPLAYS_X, NUM_DISPLAYS_Y);
-  ledWindow->setDisplayBrightness(4);
+  ledWindow = new DotMatrix();
+  ledWindow->setDisplayBrightness(1);
   ledWindow->clear();
-  ledWindow->setPixel(0, 0, 1, true);
 
-  Application* app = new Application();
+  // Application* app = new Application();
 
-  while (app->isRunning())
-  {
-    app->update();
+  // while (app->isRunning())
+  // {
+  //   app->update();
 
-    // Update de inputs
-  }
+  //   // Update de inputs
+  // }
 
-  delete app;
+  // delete app;
 
   // Verwijder de inputs
-
-  // button = new Button(2);
 }
 
-void loop() {}
-// {
-//   ledWindow->clear();
+void loop()
+{
+  for (int y = 0; y < NUM_DISPLAYS_Y * PIXELS_PER_DISPLAY_Y; y++)
+  {
+    for (int x = 0; x < NUM_DISPLAYS_X * PIXELS_PER_DISPLAY_X; x++)
+    {
+      ledWindow->setPixel(x, y, true);
+      delay(50);
+    }
+  }
 
-//   if (button->isPressed())
-//   {
-//     ledWindow->setPixel(7, 4, 0, true);
-//   }
-// }
-
-// void shutdown()
-// {
-//   delete ledWindow;
-//   delete button;
-// }
+  ledWindow->clear();
+}

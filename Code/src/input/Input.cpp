@@ -15,7 +15,7 @@ void Input::registerInput(InputDevice* device)
 
     if (s_inputDevices[type] != nullptr)
     {
-        LOG_ERROR("Cannot add input device type more then once, overwriting previous set device type: " + type)
+        LOG_ERROR("Cannot add input device type more then once")
         delete s_inputDevices[type];
     }
 
@@ -35,9 +35,12 @@ void Input::update()
 
         if (event.type != EventType::None)
         {
-            for (auto* listener : s_listeners)
+            for (int i = 0; i < MAX_EVENT_LISTENERS; i++)
             {
-                listener->onEvent(event);
+                if (s_listeners[i] != nullptr)
+                {
+                    s_listeners[i]->onEvent(event);
+                }
             }
         }
     }
@@ -111,7 +114,7 @@ void Input::RemoveListener(EventListener* listener)
 
     if (index == -1)
     {
-        LOG_ERROR("Given listener cannot be removed, it is not registered yet!")
+        LOG_ERROR("Given listener cannot be removed, not registered yet!")
         return;
     }
 

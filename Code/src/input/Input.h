@@ -8,10 +8,10 @@
 class Input
 {
 private:
-    static InputDevice* s_inputDevices[INPUT_DEVICES_AMOUNT];
+    inline static InputDevice* s_inputDevices[INPUT_DEVICES_AMOUNT];
 
-    static EventListener* s_listeners[MAX_EVENT_LISTENERS];
-    static int s_listenerCount;
+    inline static EventListener* s_listeners[MAX_EVENT_LISTENERS];
+    inline static int s_listenerCount;
 
 public:
     Input() = default;

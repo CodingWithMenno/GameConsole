@@ -2,13 +2,12 @@
 #include <Arduino.h>
 #include "InputDevice.h"
 
-class Button : InputDevice
+class Button : public InputDevice
 {
 private:
     unsigned m_pin;
 
-    bool m_isPressed;
-    bool m_firstTime;
+    bool m_wasPressed;
 
 public:
     Button(InputDeviceType input, unsigned pin, bool useBuiltInResistor = false): InputDevice(input)
@@ -22,30 +21,26 @@ public:
         Event event;
         event.device = m_eventInput;
 
-        int state = digitalRead(m_pin);
+        bool state = !digitalRead(m_pin);
 
-        if (m_isPressed)
+        if (m_wasPressed)
         {
             if (state == HIGH)
             {
-                m_firstTime = false;
                 event.type = EventType::None;
             } else
             {
-                m_isPressed = false;
-                m_firstTime = true;
+                m_wasPressed = false;
                 event.type = EventType::ButtonReleased;
             } 
         } else
         {
             if (state == HIGH)
             {
-                m_isPressed = true;
-                m_firstTime = true;
+                m_wasPressed = true;
                 event.type = EventType::ButtonPressed;
             } else
             {
-                m_firstTime = false;
                 event.type = EventType::None;
             } 
         }
@@ -55,6 +50,6 @@ public:
 
     inline bool isPressed()
     {
-        return m_isPressed;
+        return m_wasPressed;
     }
 };

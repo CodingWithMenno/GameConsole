@@ -18,10 +18,10 @@ enum class EventType
 
     JoyStickPressed,
     JoyStickReleased,
-    JoyStickPushLeft,
-    JoyStickPushRight,
-    JoyStickPushUp,
-    JoyStickPushDown
+    JoyStickLeft,
+    JoyStickRight,
+    JoyStickUp,
+    JoyStickDown
 };
 
 struct Event

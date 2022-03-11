@@ -1,105 +1,120 @@
-// #include "Input.h"
-// #include "../Log.h"
+#include "Input.h"
+#include "../Log.h"
 
-// Input::Input()
-// {
-//     // s_inputDevices = (InputDevice**) malloc(sizeof(InputDevice*) * INPUT_DEVICES_AMOUNT);
-//     // if (s_inputDevices == nullptr)
-//     // {
-//     //     LOG_ERROR("Could not allocate memory for the input devices!")
-//     // }
+Input::~Input()
+{
+    for (int i = 0; i < INPUT_DEVICES_AMOUNT; i++)
+    {
+        delete s_inputDevices[i];
+    }
+}
 
-//     // s_listenerCount = 0;
-// }
+void Input::registerInput(InputDevice* device)
+{
+    int type = device->getInputDeviceType();
 
-// Input::~Input()
-// {
-//     // for (int i = 0; i < INPUT_DEVICES_AMOUNT; i++)
-//     // {
-//     //     delete s_inputDevices[i];
-//     // }
-// }
+    if (s_inputDevices[type] != nullptr)
+    {
+        LOG_ERROR("Cannot add input device type more then once, overwriting previous set device type: " + type)
+        delete s_inputDevices[type];
+    }
 
-// void Input::registerInput(InputDevice* device)
-// {
-//     int type = device->getInputDeviceType();
+    s_inputDevices[type] = device;
+}
 
-//     if (s_inputDevices[type] != nullptr)
-//     {
-//         LOG_ERROR("Cannot add input device type more then once, overwriting previous set device type: " + type)
-//         delete s_inputDevices[type];
-//     }
+void Input::update()
+{
+    for (int i = 0; i < INPUT_DEVICES_AMOUNT; i++)
+    {
+        if (s_inputDevices[i] == nullptr)
+        {
+            continue;
+        }
 
-//     s_inputDevices[type] = device;
-// }
+        const Event& event = s_inputDevices[i]->updateEvents();
 
-// void Input::update()
-// {
-//     for (int i = 0; i < INPUT_DEVICES_AMOUNT; i++)
-//     {
-//         if (s_inputDevices[i] == nullptr)
-//         {
-//             continue;
-//         }
+        if (event.type != EventType::None)
+        {
+            for (auto* listener : s_listeners)
+            {
+                listener->onEvent(event);
+            }
+        }
+    }
+}
 
-//         const Event& event = s_inputDevices[i]->updateEvents();
+bool Input::IsButtonPressed(InputDeviceType type)
+{
+    if (s_inputDevices[type] == nullptr)
+    {
+        LOG_ERROR("Input device type does not exist!")
+        return false;
+    }
 
-//         if (event.type != EventType::None)
-//         {
-//             for (auto* listener : s_listeners)
-//             {
-//                 listener->onEvent(event);
-//             }
-//         }
-//     }
-// }
+    switch(s_inputDevices[type]->getInputDeviceType())
+    {
+        case InputDeviceType::ActionButton:
+        case InputDeviceType::HomeButton:
+        {
+            Button* button = static_cast<Button*>(s_inputDevices[type]);
+            return button->isPressed();
+        }
 
-// bool Input::IsButtonPressed(InputDeviceType type)
-// {
-//     if (s_inputDevices[type] == nullptr)
-//     {
-//         LOG_ERROR("Input device type does not exist!")
-//         return false;
-//     }
+        case InputDeviceType::LeftJoyStick:
+        {
+            JoyStick* joyStick = static_cast<JoyStick*>(s_inputDevices[type]);
+            return joyStick->isPressed();
+        }
+    }
 
-//     Button* button = dynamic_cast<Button*>(s_inputDevices[type]);
-//     if (button != nullptr)
-//     {
-//         return button->isPressed();
-//     }
-// }
+    LOG_ERROR("Given input device type is not a Button or JoyStick!")
+    return false;
+}
 
-// // Vector2 Input::GetJoyStickAxis(InputDeviceType type)
-// // {
-// //     if (s_inputDevices[type] == nullptr)
-// //     {
-// //         LOG_ERROR("Input device type does not exist!")
-// //         return { 0, 0 };
-// //     }
+Vector2 Input::GetJoyStickAxis(InputDeviceType type)
+{
+    if (s_inputDevices[type] == nullptr)
+    {
+        LOG_ERROR("Input device type does not exist!")
+        return { 0, 0 };
+    }
 
-// //     // TODO
-// //     return { 0, 0 };
-// // }
+    switch(s_inputDevices[type]->getInputDeviceType())
+    {
+        case InputDeviceType::LeftJoyStick:
+        {
+            JoyStick* joyStick = static_cast<JoyStick*>(s_inputDevices[type]);
+            return joyStick->GetAxis();
+        }
+    }
 
-// void Input::AddListener(EventListener* listener)
-// {
-//     //s_listeners.push_back(listener);
+    LOG_ERROR("Given input device type is not a JoyStick!")
+    return { 0, 0 };   
+}
 
-//     s_listeners[s_listenerCount] = listener;
-//     s_listenerCount++;
-// }
+void Input::AddListener(EventListener* listener)
+{
+    s_listeners[s_listenerCount] = listener;
+    s_listenerCount++;
+}
 
-// void Input::RemoveListener(EventListener* listener)
-// {
+void Input::RemoveListener(EventListener* listener)
+{
+    int index = -1;
+    for (int i = 0; i < s_listenerCount; i++)
+    {
+        if (s_listeners[i] == listener)
+        {
+            index = i;
+        }
+    }
 
+    if (index == -1)
+    {
+        LOG_ERROR("Given listener cannot be removed, it is not registered yet!")
+        return;
+    }
 
-//     // auto iterator = std::find(s_listeners.begin(), s_listeners.end(), listener);
-
-//     // if (iterator != s_listeners.end())
-//     // {
-//     //     s_listeners.erase(iterator);
-//     // } else
-//     // {
-//     //     LOG_ERROR("Cannot remove non-existent listener")
-//     // }
-// }
+    s_listenerCount--;
+    s_listeners[index] = s_listeners[s_listenerCount];
+}

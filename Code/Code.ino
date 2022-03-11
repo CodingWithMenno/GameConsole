@@ -1,79 +1,50 @@
 #include "src/Log.h"
+
 #include "src/Application.h"
+#include "src/LibraryScene.h"
 
 #include "src/input/Input.h"
-#include "src/output/DotMatrix.h"
+#include "src/output/Graphics.h"
 #include "src/input/JoyStick.h"
 
 #define SERIAL_BAUD     9600
-
-Input* input;
-
-// DotMatrix* ledWindow;
-// JoyStick* joyStick;
-
-class Test : public EventListener
-{
-public:
-  void onEvent(const Event& event) override
-  {
-    if (event.type == EventType::JoyStickPressed)
-    {
-      // LOG_INFO("JoyStick Pressed")
-      Serial.println("Test");
-    }
-  }
-};
-
-Test* test;
 
 void setup() 
 {
   Log::Init(SERIAL_BAUD);
 
-  // Initialiseer inputs & outputs (de poorten)
+  Graphics* graphics = new Graphics();
+  startupSequence();
 
-  // ledWindow = new DotMatrix();
-  // ledWindow->setDisplayBrightness(1);
-  // ledWindow->clear();
+  Input* inputSystem = new Input();
+  inputSystem->registerInput(new JoyStick(InputDeviceType::LeftJoyStick, A0, A1, 2));
 
-  LOG_INFO("Hier")
+  Application* app = new Application(new LibraryScene());
 
-  input = new Input();
-  input->registerInput(new JoyStick(InputDeviceType::LeftJoyStick, A0, A1, 2));
+  while (app->isRunning())
+  {
+    app->update();
+    inputSystem->update();
+  }
 
-  test = new Test();
-  Input::AddListener(test);
+  delete app;
+  delete inputSystem;
+  delete graphics;
+}
 
-  // Application* app = new Application();
+void startupSequence()
+{
+  DotMatrix* matrix = Graphics::GetDotMatrix();
 
-  // while (app->isRunning())
-  // {
-  //   app->update();
-
-  //   // Update de inputs
-  // }
-
-  // delete app;
-
-  // Verwijder de inputs
+  for (int x = 0; x < NUM_DISPLAYS_X * PIXELS_PER_DISPLAY_X; x++)
+  {
+    matrix->setPixel(x, 7, true);
+    matrix->setPixel(x, 8, true);
+    delay(20);
+  }
 }
 
 void loop()
 {
-  input->update();
-
-  // Event e = joyStick->updateEvents();
-  
-  // switch (e.type)
-  // {
-  // case EventType::JoyStickPressed: LOG_INFO("JoyStickPressed") break;
-  // case EventType::JoyStickReleased: LOG_INFO("JoyStickReleased") break;
-  // case EventType::JoyStickDown: LOG_INFO("JoyStickDown") break;
-  // case EventType::JoyStickLeft: LOG_INFO("JoyStickLeft") break;
-  // case EventType::JoyStickRight: LOG_INFO("JoyStickRight") break;
-  // case EventType::JoyStickUp: LOG_INFO("JoyStickUp") break;
-  // }
-
-  // delay(100);
+  // Empty
 }

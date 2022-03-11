@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-class Application
+class SceneManager
 {
 private:
     bool m_isRunning;
@@ -9,8 +9,8 @@ private:
     inline static Scene* s_activeScene;
 
 public:
-    Application(Scene* scene);
-    ~Application();
+    SceneManager(Scene* scene);
+    ~SceneManager();
 
     void update();
 

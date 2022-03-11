@@ -1,18 +1,18 @@
-#include "Application.h"
+#include "SceneManager.h"
 #include "Log.h"
 
-Application::Application(Scene* scene)
+SceneManager::SceneManager(Scene* scene)
 {
     m_isRunning = true;
     s_activeScene = scene;
 }
 
-Application::~Application()
+SceneManager::~SceneManager()
 {
     delete s_activeScene;
 }
 
-void Application::update()
+void SceneManager::update()
 {
     static unsigned long timeOld = 0;
     unsigned long frameStartTime = millis();
@@ -24,7 +24,7 @@ void Application::update()
     s_activeScene->draw();
 }
 
-void Application::ChangeScene(Scene* scene)
+void SceneManager::ChangeScene(Scene* scene)
 {
     delete s_activeScene;
     s_activeScene = scene;

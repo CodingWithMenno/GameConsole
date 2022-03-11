@@ -1,6 +1,6 @@
 #include "src/Log.h"
 
-#include "src/Application.h"
+#include "src/SceneManager.h"
 #include "src/LibraryScene.h"
 
 #include "src/input/Input.h"
@@ -19,15 +19,15 @@ void setup()
   Input* inputSystem = new Input();
   inputSystem->registerInput(new JoyStick(InputDeviceType::LeftJoyStick, A0, A1, 2));
 
-  Application* app = new Application(new LibraryScene());
+  SceneManager* sceneManager = new SceneManager(new LibraryScene());
 
-  while (app->isRunning())
+  while (sceneManager->isRunning())
   {
-    app->update();
+    sceneManager->update();
     inputSystem->update();
   }
 
-  delete app;
+  delete sceneManager;
   delete inputSystem;
   delete graphics;
 }
